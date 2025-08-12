@@ -3,6 +3,7 @@
   import { loadKakaoMap } from "@/utils/loadKakaoMap.ts";
   import { ref, onMounted, nextTick  } from 'vue';
   import {useGeoPosition,DEFAULT_POSITION } from "@/composables/useGeoPosition.js";
+  import {usePlaces} from "@/composables/usePlaces.ts";
   import {useKakaoMap} from "@/composables/useKakaoMap.ts";
 
   defineOptions({
@@ -11,6 +12,8 @@
 
   const loading = useLoadingStore();
   const mapContainer = ref<HTMLElement | null>(null);
+  const { renderMarker ,position } = useKakaoMap();
+  const { fetchNearbyPlaces, places } = usePlaces();
 
   async function initMapView() {
     loading.start();
@@ -22,7 +25,19 @@
       await kakaoMap.init(mapContainer.value,{
         level: 4,
         defaultCenter: { lat: DEFAULT_POSITION.lat, lng: DEFAULT_POSITION.lng },
-      });
+      })
+
+     console.log("표지션",position.value.lat, position.value.lng)
+
+
+      await fetchNearbyPlaces(
+        Number(position.value.lat),
+        Number(position.value.lng),
+        1000
+      )
+
+      renderMarker(places.value.documents)
+      console.log(places.value.meta)
 
     } catch(err) {
       console.error("카카오맵 초기화 실패:", err);
@@ -39,7 +54,7 @@
 
 <template>
   <div class="map-wrap">
-    <div ref="mapContainer" id="mapView">
+    <div  ref="mapContainer" id="mapView">
 
     </div>
     <div class="consult-map"></div>

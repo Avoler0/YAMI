@@ -5,8 +5,7 @@ type Coords = { lat:number; lng: number; }
 let mapInstance = null;
 let mapsLib = null;
 let marker: any = null;
-let isDefault = false;
-export const position = ref<Coords | null>(null);
+
 export const DEFAULT_POSITION: Coords = { lat: 37.5665, lng: 126.9780 }; // 기본 값: 서울 시청
 
 function ensureBound() {
@@ -17,12 +16,16 @@ function ensureBound() {
 
 export function useGeoPosition(){
 
+    const position = ref<Coords | null>(null);
+
     function bind(map:any, maps:any){
         mapInstance = map;
         mapsLib = maps;
     }
 
-    async function setFromGeo(fallback: Coords = DEFAULT_POSITION) {
+    async function setFromGeo(
+        fallback: Coords = DEFAULT_POSITION
+    ):Promise<Coords|null> {
         ensureBound();
         const coords = await new Promise<Coords>((resolve) => {
             if (!('geolocation' in navigator)) {
@@ -40,7 +43,9 @@ export function useGeoPosition(){
         return position.value!;
     }
 
-    function set(lat: number, lng: number, opts: { move?: boolean, smooth?:boolean } = {}){
+    function set(
+        lat: number, lng: number, opts: { move?: boolean, smooth?:boolean } = {}
+    ): void{
         ensureBound();
         position.value = { lat, lng };
         if (opts?.move) {
@@ -54,6 +59,8 @@ export function useGeoPosition(){
             marker.setPosition(transKakaoLatLng());
             if (!marker.getMap()) marker.setMap(mapInstance);
         }
+
+        console.log(position.value)
     }
 
     function transKakaoLatLng(lat?: number, lng?: number) {
@@ -61,6 +68,6 @@ export function useGeoPosition(){
         return new mapsLib.LatLng(c.lat, c.lng);
     }
 
-    return { bind, set, transKakaoLatLng, setFromGeo };
+    return { bind, set, transKakaoLatLng, setFromGeo, position };
 
 }
