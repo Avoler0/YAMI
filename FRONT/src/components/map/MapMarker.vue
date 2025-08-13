@@ -18,7 +18,6 @@ const { place, type } = prop;
 
 const isPlaceClick = ref(false);
 
-
 const className = type == "me" ? "marker-me" : "marker-place"
 
 function placeClick(e: MouseEvent) {
