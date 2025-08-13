@@ -1,10 +1,11 @@
 <script setup lang="ts">
   import { useLoadingStore } from "@/stores/loading"
-  import { loadKakaoMap } from "@/utils/loadKakaoMap.ts";
+  import { loadKakaoMap } from "@/utils/loadKakaoMap.js";
   import { ref, onMounted, nextTick  } from 'vue';
   import {useGeoPosition,DEFAULT_POSITION } from "@/composables/useGeoPosition.js";
-  import {usePlaces} from "@/composables/usePlaces.ts";
-  import {useKakaoMap} from "@/composables/useKakaoMap.ts";
+  import {usePlaces} from "@/composables/usePlaces.js";
+  import {useKakaoMap} from "@/composables/useKakaoMap.js";
+  import {PEOPLE_RADIUS} from "@/contants/map.js";
 
   defineOptions({
     name: "MapView",
@@ -33,7 +34,7 @@
       await fetchNearbyPlaces(
         Number(position.value.lat),
         Number(position.value.lng),
-        1000
+          PEOPLE_RADIUS
       )
 
       renderMarker(places.value.documents)
@@ -68,4 +69,5 @@
   }
 
   #mapView { height: 100%; left: 0; position: absolute; top: 0; width: 100%; }
+
 </style>

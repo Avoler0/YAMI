@@ -1,15 +1,19 @@
-import {ref} from "vue";
+import {createApp, ref} from "vue";
 import { useLoadingStore } from "@/stores/loading"
 import {loadKakaoMap} from "@/utils/loadKakaoMap.ts";
 import type {Coords} from "@/types/places.ts";
 import { DEFAULT_POSITION } from "@/contants/map.ts";
 import type {Place} from "../types/places.ts";
 
+import MapMarker from "../components/map/MapMarker.vue";
+
+let imgMe: any, imgPlace: any, imgPlaceSelected: any;
 const position = ref<Coords | null> (null);
 const map = ref<any>(null);
 const maps = ref<any>(null);
 let centerMarker = null;
 const markers = [];
+
 
 export function useKakaoMap(){
 
@@ -27,8 +31,6 @@ export function useKakaoMap(){
         )
 
         const coords = await getPosition();
-
-        console.log(coords);
         await setPosition(coords.lat, coords.lng, { move: true, smooth: true });
 
         if(coords.lat == DEFAULT_POSITION.lat && coords.lng == DEFAULT_POSITION.lng){
@@ -36,6 +38,19 @@ export function useKakaoMap(){
         }
 
 
+    }
+
+    function makeMarkerEl(type: string, data: Place) {
+        const markerEl = document.createElement("div");
+        markerEl.setAttribute("data-title", name);
+
+        const comp = createApp(MapMarker,{
+            type: type,
+            place: data
+        });
+        comp.mount(markerEl);
+
+        return markerEl.firstChild as HTMLElement;
     }
 
     async function getPosition() {
@@ -61,7 +76,14 @@ export function useKakaoMap(){
         }
 
         if (!centerMarker) { // 이후에 useKakaoMap으로 마커 이동 함수 분할
-            centerMarker = new maps.value.Marker({ position: transKakaoLatLng(), map: map.value });
+            centerMarker = new maps.value.CustomOverlay({
+                position: transKakaoLatLng(),
+                map: map.value,
+                clickable: true,
+                content: makeMarkerEl("me"),
+                yAnchor:1,
+                zIndex: 1000
+            });
         } else {
             centerMarker.setPosition(transKakaoLatLng());
             if (!centerMarker.getMap()) centerMarker.setMap(map.value);
@@ -84,10 +106,12 @@ export function useKakaoMap(){
         places.forEach((place) => {
             const pos = transKakaoLatLng(place.y, place.x);
 
-            console.log("Place : ", place)
-            const m = new maps.value.Marker({
+            const m = new maps.value.CustomOverlay({
                 position: pos,
                 map: map.value,
+                clickable: true,
+                content: makeMarkerEl("place",place),
+                yAnchor:1,
                 title: place.name,
                 zIndex: 10
             });

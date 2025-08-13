@@ -25,6 +25,8 @@ router.get('/nearby', async (req, res) => {
                     x: lng,
                     y: lat,
                     radius: radius,
+                    sort:"distance",
+                    size:15
                  }
             }
         )

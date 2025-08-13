@@ -15,6 +15,14 @@ export function usePlaces(){
         try{
             const { data } = await fetchNearby(lat, lng, radius);
 
+            console.log('데이터',data)
+
+            data.documents.forEach((item) => {
+                console.log('플레이스 이름',item.place_name)
+                if(item.place_name === "문화반점"){
+                    console.log('지정 데이터',item)
+                }
+            })
             places.value = data;
         }catch(e:any){
             error.value = e.message;

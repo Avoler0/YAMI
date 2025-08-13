@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineStore } from 'pinia';
-import MapView from "@/components/MapView.vue"
-import Loading from "@/components/Loading.vue"
+import MapView from "@/components/map/MapView.vue"
+import Loading from "@/components/ui/Loading.vue"
 
 
 

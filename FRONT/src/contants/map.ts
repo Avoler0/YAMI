@@ -7,3 +7,5 @@ export const DEFAULT_POSITION: Coords = {
 
 export const DEFAULT_ZOOM_LEVEL = 4;
 export const MAX_RADIUS = 20000;
+
+export const PEOPLE_RADIUS = 400;
