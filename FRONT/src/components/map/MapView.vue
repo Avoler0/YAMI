@@ -23,8 +23,9 @@
       if (!mapContainer.value) console.error("MapView initialized");
 
       const kakaoMap = useKakaoMap();
+
       await kakaoMap.init(mapContainer.value,{
-        level: 4,
+        level: 1,
         defaultCenter: { lat: DEFAULT_POSITION.lat, lng: DEFAULT_POSITION.lng },
       })
 

@@ -22,7 +22,7 @@ export function useKakaoMap(){
 
         maps.value = kakao.maps;
 
-        const level = opts?.level ?? 3;
+        const level = opts?.level ?? 1;
         const dc = opts?.defaultCenter ?? { lat: DEFAULT_POSITION.lat, lng: DEFAULT_POSITION.lng };
 
         map.value = new maps.value.Map(
@@ -82,7 +82,7 @@ export function useKakaoMap(){
                 clickable: true,
                 content: makeMarkerEl("me"),
                 yAnchor:1,
-                zIndex: 1000
+                zIndex: 50
             });
         } else {
             centerMarker.setPosition(transKakaoLatLng());
@@ -113,7 +113,7 @@ export function useKakaoMap(){
                 content: makeMarkerEl("place",place),
                 yAnchor:1,
                 title: place.name,
-                zIndex: 10
+                zIndex: 5
             });
 
             markers.push(m);

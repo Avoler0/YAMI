@@ -17,16 +17,20 @@ const prop = defineProps<Prop>()
 const { place, type } = prop;
 
 const isPlaceClick = ref(false);
-
+const markerPin = ref<HTMLElement | null>(null);
 const className = type == "me" ? "marker-me" : "marker-place"
 
 function placeClick(e: MouseEvent) {
   if(type !== "place") return;
   e.stopPropagation();
 
+  const $parent = markerPin.value?.parentElement as HTMLElement | null;
+
   if(isPlaceClick.value) {
+    $parent.style.zIndex = "0";
     isPlaceClick.value = false;
   }else{
+    $parent.style.zIndex = "100";
     isPlaceClick.value = true;
   }
 }
@@ -34,7 +38,7 @@ function placeClick(e: MouseEvent) {
 </script>
 
 <template>
-  <div v-if="type" class="marker-pin">
+  <div v-if="type" ref="markerPin" class="marker-pin" :style="{ zIndex: isPlaceClick ? 100 : 0 }">
     <span
         :class="className"
         v-bind="type == 'place' ? { 'yami-rest': place.place_name } : {}"

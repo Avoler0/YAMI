@@ -2,7 +2,7 @@ import express from "express";
 import axios from "axios";
 import cors from "cors";
 import helmet from "helmet";
-import {v1} from "./routes/v1/index.js";
+import {v1} from "./routes/v1/index.ts";
 
 export const createApp = () => {
     const app = express();
