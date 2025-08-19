@@ -9,11 +9,13 @@ export function usePlaces(){
     const placeDetail = ref(null);
     const reviews = ref([]);
 
-    async function fetchNearbyPlaces(lat:number, lng:number, radius = 500){
+
+
+    async function fetchNearbyPlaces(lat:number, lng:number, radius = 500, rimit){
         loading.value = true;
 
         try{
-            const { data } = await fetchNearby(lat, lng, radius);
+            const { data } = await fetchNearby(lat, lng, radius, rimit);
 
             console.log('데이터',data)
 
