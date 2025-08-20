@@ -1,33 +1,38 @@
 import {createApp, ref} from "vue";
-import { useLoadingStore } from "@/stores/loading"
+import { useMapStore } from "@/stores/map.store.ts"
 import {loadKakaoMap} from "@/utils/loadKakaoMap.ts";
 import type {Coords} from "@/types/places.ts";
 import { DEFAULT_POSITION } from "@/contants/map.ts";
 import type {Place} from "../types/places.ts";
 
 import MapMarker from "../components/map/MapMarker.vue";
+import {DEFAULT_ZOOM_LEVEL, MAX_ZOOM_LEVEL} from "../contants/map.ts";
+import {boundsFromKakao} from "../utils/cell.utils.ts";
 
 let imgMe: any, imgPlace: any, imgPlaceSelected: any;
 const position = ref<Coords | null> (null);
+const bounds = ref<kakao.maps.LatLngBounds | null>(null);
 const map = ref<any>(null);
 const maps = ref<any>(null);
-let centerMarker = null;
-const markers = [];
+let centerMarker: any = null;
+const markers:any[] = [];
+
+
 
 
 export function useKakaoMap(){
+    const mapStore = useMapStore();
 
     async function init(containerEl: HTMLElement, opts?: { level?: number; defaultCenter?: {lat:number; lng:number} })  {
         const kakao = await loadKakaoMap();
+        const level = opts?.level ?? opts?.level >= MAX_ZOOM_LEVEL ? DEFAULT_ZOOM_LEVEL : opts?.level;
+        const defaultCenter = opts?.defaultCenter ?? { lat: DEFAULT_POSITION.lat, lng: DEFAULT_POSITION.lng };
 
         maps.value = kakao.maps;
 
-        const level = opts?.level ?? 1;
-        const dc = opts?.defaultCenter ?? { lat: DEFAULT_POSITION.lat, lng: DEFAULT_POSITION.lng };
-
         map.value = new maps.value.Map(
             containerEl,
-            { center: new maps.value.LatLng(dc.lat, dc.lng), level }
+            { center: new maps.value.LatLng(defaultCenter.lat, defaultCenter.lng), level, maxLevel: MAX_ZOOM_LEVEL }
         )
 
         const coords = await getPosition();
@@ -38,6 +43,23 @@ export function useKakaoMap(){
         }
 
 
+
+        maps.value.event.addListener(map.value, 'zoom_changed', () => { mapStore.setZoom(map.value.getLevel()); })
+
+
+
+        const bounds = boundsFromKakao(map.value.getBounds())
+
+        console.log('바운즈',bounds,transKakaoLatLng(bounds.sw))
+    }
+
+
+
+
+    function updateBounds(){
+        bounds.value = map.value.getBounds();
+
+        console.log('바운즈',bounds)
     }
 
     function makeMarkerEl(type: string, data: Place) {
@@ -51,6 +73,17 @@ export function useKakaoMap(){
         comp.mount(markerEl);
 
         return markerEl.firstChild as HTMLElement;
+    }
+
+    function setMarker(className:string,position:any,data?: Place) {
+        return new maps.value.CustomOverlay({
+            position: position,
+            map: map.value,
+            clickable: true,
+            content: makeMarkerEl(className,data),
+            yAnchor:1,
+            zIndex: 5
+        });
     }
 
     async function getPosition() {
@@ -75,19 +108,7 @@ export function useKakaoMap(){
             (opts.smooth ?? true) ? map.value.panTo(ll) : map.value.setCenter(ll);
         }
 
-        if (!centerMarker) { // 이후에 useKakaoMap으로 마커 이동 함수 분할
-            centerMarker = new maps.value.CustomOverlay({
-                position: transKakaoLatLng(),
-                map: map.value,
-                clickable: true,
-                content: makeMarkerEl("me"),
-                yAnchor:1,
-                zIndex: 50
-            });
-        } else {
-            centerMarker.setPosition(transKakaoLatLng());
-            if (!centerMarker.getMap()) centerMarker.setMap(map.value);
-        }
+        setMarker('me',transKakaoLatLng());
     }
 
     function clearMarkers() {
@@ -101,26 +122,11 @@ export function useKakaoMap(){
 
         clearMarkers();
 
-        console.log('마커!',maps.value.Marker)
-
         places.forEach((place) => {
             const pos = transKakaoLatLng(place.y, place.x);
 
-            const m = new maps.value.CustomOverlay({
-                position: pos,
-                map: map.value,
-                clickable: true,
-                content: makeMarkerEl("place",place),
-                yAnchor:1,
-                title: place.name,
-                zIndex: 5
-            });
-
-            markers.push(m);
+            setMarker('place',pos,place)
         })
-
-        // clusterer.addMarkers(markers);
-        console.log('마커스',markers)
     }
 
     function transKakaoLatLng(lat?: number, lng?: number) {
@@ -128,5 +134,5 @@ export function useKakaoMap(){
         return new maps.value.LatLng(c.lat, c.lng);
     }
 
-    return { map, maps, init,position,renderMarker }
+    return { map, maps, init,position,renderMarker,updateBounds, bounds }
 }

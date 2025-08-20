@@ -41,7 +41,7 @@ function placeClick(e: MouseEvent) {
   <div v-if="type" ref="markerPin" class="marker-pin" :style="{ zIndex: isPlaceClick ? 100 : 0 }">
     <span
         :class="className"
-        v-bind="type == 'place' ? { 'yami-rest': place.place_name } : {}"
+        v-bind="type == 'place' ? { 'yami-rest': place.place_name ?? '' } : {}"
         @click="placeClick"></span>
     <PlaceDetail  v-if="type == 'place' && isPlaceClick" :isShow="isPlaceClick" :place="place" />
   </div>

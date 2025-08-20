@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useLoadingStore } from '@/stores/loading';
+  import { useLoadingStore } from '@/stores/loading.store.ts';
 
   const loading = useLoadingStore();
 

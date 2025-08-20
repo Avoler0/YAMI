@@ -1,11 +1,11 @@
 <script setup lang="ts">
-  import { useLoadingStore } from "@/stores/loading"
+  import { useLoadingStore } from "@/stores/loading.store.ts"
   import { loadKakaoMap } from "@/utils/loadKakaoMap.js";
   import { ref, onMounted, nextTick  } from 'vue';
   import {useGeoPosition,DEFAULT_POSITION } from "@/composables/useGeoPosition.js";
   import {usePlaces} from "@/composables/usePlaces.js";
   import {useKakaoMap} from "@/composables/useKakaoMap.js";
-  import {PEOPLE_RADIUS} from "@/contants/map.js";
+  import {DEFAULT_ZOOM_LEVEL, PEOPLE_RADIUS} from "@/contants/map.js";
 
   defineOptions({
     name: "MapView",
@@ -13,7 +13,7 @@
 
   const loading = useLoadingStore();
   const mapContainer = ref<HTMLElement | null>(null);
-  const { renderMarker ,position } = useKakaoMap();
+  const { updateBounds,renderMarker ,position } = useKakaoMap();
   const { fetchNearbyPlaces, places } = usePlaces();
 
   async function initMapView() {
@@ -25,12 +25,11 @@
       const kakaoMap = useKakaoMap();
 
       await kakaoMap.init(mapContainer.value,{
-        level: 1,
+        level: DEFAULT_ZOOM_LEVEL,
         defaultCenter: { lat: DEFAULT_POSITION.lat, lng: DEFAULT_POSITION.lng },
       })
 
      console.log("표지션",position.value.lat, position.value.lng)
-
 
       await fetchNearbyPlaces(
         Number(position.value.lat),
