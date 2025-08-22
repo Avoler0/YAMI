@@ -7,7 +7,7 @@ import PlaceDetail from "@/components/map/PlaceDetail.vue";
 import type {Place} from "@/types/places.ts";
 
 type Prop = {
-  type: "me" | "place",
+  type: "yami" | "place",
   place: Place
 }
 defineOptions({
@@ -18,7 +18,7 @@ const { place, type } = prop;
 
 const isPlaceClick = ref(false);
 const markerPin = ref<HTMLElement | null>(null);
-const className = type == "me" ? "marker-me" : "marker-place"
+const className = type == "yami" ? "marker-yami" : "marker-place"
 
 function placeClick(e: MouseEvent) {
   if(type !== "place") return;
@@ -63,14 +63,14 @@ function placeClick(e: MouseEvent) {
   100% { box-shadow: 0 0 0 0   rgba(30,144,255,0); }
 }
 
-.marker-me { animation: meBreath 5s ease-in-out infinite; background-color: #1E90FF; border: 3px solid #fff; border-radius: 999px; box-shadow: 0 6px 16px rgba(0,0,0,.35); cursor: pointer; display: block; height: 16px; position: relative; width: 16px; will-change: filter, box-shadow, transform; }
+.marker-yami { animation: meBreath 5s ease-in-out infinite; background-color: #1E90FF; border: 3px solid #fff; border-radius: 999px; box-shadow: 0 6px 16px rgba(0,0,0,.35); cursor: pointer; display: block; height: 16px; position: relative; width: 16px; will-change: filter, box-shadow, transform; }
 
-.marker-me::before,
-.marker-me::after { box-shadow: 0 0 0 0 rgba(30,144,255,0.45); border-radius: 999px; content: ""; height: 20px; left: 50%; position: absolute; top: 50%; transform: translate(-50%, -50%); width: 20px; }
-.marker-me::before { animation: mePulse2 2.8s ease-out infinite; }
-.marker-me::after  { animation: mePulse2 2.8s ease-out .6s infinite; }
+.marker-yami::before,
+.marker-yami::after { box-shadow: 0 0 0 0 rgba(30,144,255,0.45); border-radius: 999px; content: ""; height: 20px; left: 50%; position: absolute; top: 50%; transform: translate(-50%, -50%); width: 20px; }
+.marker-yami::before { animation: mePulse2 2.8s ease-out infinite; }
+.marker-yami::after  { animation: mePulse2 2.8s ease-out .6s infinite; }
 
-.marker-me.bump {
+.marker-yami.bump {
   animation: meBump .5s cubic-bezier(.2,.8,.2,1) 0.1s;
 }
 @keyframes meBump {

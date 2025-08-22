@@ -23,10 +23,10 @@ export function metetsToDegLng(meter: number, atLatDeg:number): number {
 export function cellFromBounds(bounds: Bounds, stepMeters = 300): Cell[] {
     const cells:Cell[] = [];
 
-    const dLat = stepMeters / latitude;
+    const dLat = stepMeters / METERS_PER_DEG_LAT;
 
     const centerLat = (bounds.sw.lat + bounds.sw.lng) / 2;
-    const dLng = stepMeters / ( latitude * Math.cos((centerLat * Math.PI) / 180));
+    const dLng = stepMeters / ( METERS_PER_DEG_LAT * Math.cos((centerLat * Math.PI) / 180));
 
     const startIx = Math.floor(bounds.sw)
 }
