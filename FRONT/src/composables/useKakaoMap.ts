@@ -7,7 +7,7 @@ import type {Place} from "../types/places.ts";
 
 import MapMarker from "../components/map/MapMarker.vue";
 import {DEFAULT_ZOOM_LEVEL, MAX_ZOOM_LEVEL} from "../contants/map.ts";
-import {boundsFromKakao} from "../utils/cell.utils.ts";
+import {getMetersPerPixel} from "../utils/gridUtils.ts";
 
 let imgMe: any, imgPlace: any, imgPlaceSelected: any;
 const position = ref<Coords | null> (null);
@@ -44,10 +44,10 @@ export function useKakaoMap(){
 
 
 
-        maps.value.event.addListener(map.value, 'zoom_changed', () => { getMapMeter(); })
+        maps.value.event.addListener(map.value, 'zoom_changed', () => { getMetersPerPixel(map.value); })
 
 
-        getMapMeter();
+        getMetersPerPixel(map.value);
     }
 
 
@@ -131,51 +131,7 @@ export function useKakaoMap(){
         return new maps.value.LatLng(c.lat, c.lng);
     }
 
-    function getMapMeter(){
-        const mapContainer = document.getElementById('mapView');
-        const w = mapContainer.offsetWidth;
-        const h = mapContainer.offsetHeight;
 
-        const proj = map.value.getProjection();
-        const center = map.value.getCenter();
-
-        const pt = proj.containerPointFromCoords(center); // { x, y }
-
-        const ptRight = new kakao.maps.Point(pt.x + 100, pt.y);
-        const llR = proj.coordsFromContainerPoint(ptRight);
-
-        const ptDown = new kakao.maps.Point(pt.x, pt.y + 100);
-        const llD = proj.coordsFromContainerPoint(ptDown);
-
-        const llC = { lat: center.getLat(), lng: center.getLng() };
-
-        const mX = haversine(llC, { lat: llR.getLat(), lng: llR.getLng() }) / 100;
-        const mY = haversine(llC, { lat: llD.getLat(), lng: llD.getLng() }) / 100;
-
-        const mapWidthMeter = mX * w;
-        const mapHeightMeter = mY * h;
-        console.log(`1px ≈ ${mX.toFixed(3)}m (가로), ${mY.toFixed(3)}m (세로)`);
-        console.log(`화면 폭 ≈ ${mapWidthMeter.toFixed(1)}m, 화면 높이 ≈ ${mapHeightMeter.toFixed(1)}m`);
-    }
-
-    function haversine(a,b){
-        const R = 6371000;
-        const toRad = d => (d * Math.PI) / 180;
-
-        const dLat = toRad(b.lat - a.lat);
-        const dLng = toRad(b.lng - a.lng);
-
-        const lat1 = toRad(a.lat);
-        const lat2 = toRad(b.lat);
-
-        const s =
-            Math.sin(dLat / 2) ** 2 +
-            Math.cos(lat1) * Math.cos(lat2) *
-            Math.sin(dLng / 2) ** 2;
-
-        return 2 * R * Math.asin(Math.sqrt(s));
-
-    }
 
     return { map, maps, init,position,renderMarker,updateBounds, bounds }
 }
