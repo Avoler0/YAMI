@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 21" width="1em" height="1em" aria-hidden="true">
+  <defs>
+    <clipPath id="half">
+      <rect x="0" y="0" width="11" height="21"></rect>
+    </clipPath>
+  </defs>
+  <!-- 외곽선 -->
+  <path d="M11 0.9l2.69 5.45 6.02 0.88-4.36 4.25 1.03 5.99L11 14.96 5.62 17.47l1.03-5.99L2.29 7.23l6.02-0.88L11 0.9z" fill="none" stroke="#B07A00" stroke-width="1" stroke-linejoin="round"></path>
+  <!-- 왼쪽 절반 채움 -->
+  <path d="M11 0.9l2.69 5.45 6.02 0.88-4.36 4.25 1.03 5.99L11 14.96 5.62 17.47l1.03-5.99L2.29 7.23l6.02-0.88L11 0.9z" fill="#FFC24B" clip-path="url(#half)"></path>
+</svg>

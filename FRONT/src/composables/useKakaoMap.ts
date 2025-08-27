@@ -48,10 +48,6 @@ export function useKakaoMap(){
 
 
         getMapMeter();
-
-        const bounds = boundsFromKakao(map.value.getBounds())
-
-        // console.log('바운즈',bounds,transKakaoLatLng(bounds.sw))
     }
 
 
