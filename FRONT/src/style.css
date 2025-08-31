@@ -1,16 +1,32 @@
 
 html,body {
-  font-size: 1.6rem;
   margin: 0;
-  font-family: "pretendard", serif;
-  font-size: 16px;
+  font-size: 10px;
   font-weight: 400;
+  line-height: 1.5;
 }
 
-#app { font-size: inherit; height: 100vh; width: 100vw; }
+#app { display: flex; font-size: inherit; height: 100vh; width: 100vw; }
 
-* { margin: 0; padding: 0; }
 
+* { box-sizing: border-box; font-family: "pretendard", serif; margin: 0; padding: 0; }
+
+button { border: 0; background: none; }
+
+/* 아이콘을 채우는 클래스 */
+.fill {
+    font-variation-settings: 'FILL' 1;
+}
+
+/* 아이콘 굵기 조절 클래스 */
+.bold {
+    font-variation-settings: 'wght' 700;
+}
+
+/* 채우기와 굵기를 동시에 */
+.fill.bold {
+    font-variation-settings: 'FILL' 1, 'wght' 700;
+}
 
 @font-face { font-family:"pretendard"; src:url("./assets/fonts/Pretendard-Black.ttf"); font-weight: 900; }
 @font-face { font-family:"pretendard"; src:url("./assets/fonts/Pretendard-Black.woff"); font-weight: 900; }

@@ -63,10 +63,7 @@
 </template>
 
 <style>
-  .map-wrap {
-    width: 100%;
-    height: 100%;
-  }
+  .map-wrap { flex: 1; height: 100%; position: relative; width: 100%; }
 
   #mapView { height: 100%; left: 0; position: absolute; top: 0; width: 100%; }
 

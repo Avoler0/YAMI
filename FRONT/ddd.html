@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>YAMI 맛집 탐험</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+    <style type="text/tailwindcss">
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings:
+                    'FILL' 0,
+                    'wght' 400,
+                    'GRAD' 0,
+                    'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings:
+                    'FILL' 1
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+<div class="flex h-screen">
+    <aside class="w-[420px] bg-white shadow-lg flex flex-col p-6 z-20 border-r border-gray-200">
+        <header class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-orange-500">🍽 YAMI</h1>
+            <div class="flex items-center space-x-2">
+                <button class="text-gray-500 hover:text-gray-800 p-2 rounded-full hover:bg-gray-100">
+                    <span class="material-symbols-outlined">settings</span>
+                </button>
+                <button class="text-gray-500 hover:text-gray-800 p-2 rounded-full hover:bg-gray-100">
+                    <span class="material-symbols-outlined">person</span>
+                </button>
+            </div>
+        </header>
+        <div class="relative mb-4">
+            <input class="w-full pl-12 pr-4 py-3 border border-gray-200 bg-gray-50 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="맛집, 주소, 지하철역 검색..." type="text"/>
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+        </div>
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex space-x-2">
+                <button class="flex items-center space-x-2 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 text-gray-700">
+                    <span class="material-symbols-outlined text-lg">restaurant</span>
+                    <span>한식</span>
+                </button>
+                <button class="flex items-center space-x-2 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 text-gray-700">
+                    <span class="material-symbols-outlined text-lg">ramen_dining</span>
+                    <span>일식</span>
+                </button>
+                <button class="flex items-center space-x-2 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 text-gray-700">
+                    <span class="material-symbols-outlined text-lg">local_cafe</span>
+                    <span>카페</span>
+                </button>
+                <button class="flex items-center space-x-2 px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100 text-gray-700">
+                    <span class="material-symbols-outlined text-lg">more_horiz</span>
+                </button>
+            </div>
+        </div>
+        <div class="flex border-b border-gray-200 mb-4">
+            <button class="flex-1 text-center py-3 border-b-2 border-orange-500 text-orange-500 font-semibold flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">explore</span>
+                <span>주변 탐색</span>
+            </button>
+            <button class="flex-1 text-center py-3 text-gray-500 hover:text-orange-500 hover:border-b-2 hover:border-orange-200 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">favorite_border</span>
+                <span>찜 목록</span>
+            </button>
+            <button class="flex-1 text-center py-3 text-gray-500 hover:text-orange-500 hover:border-b-2 hover:border-orange-200 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">auto_awesome</span>
+                <span>AI 추천</span>
+            </button>
+        </div>
+        <div class="flex-grow overflow-y-auto pr-2 -mr-4 space-y-2">
+            <div class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-lg cursor-pointer transition-shadow duration-300">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-bold">맛있는 한식당</h3>
+                        <p class="text-sm text-gray-500">한식</p>
+                    </div>
+                    <span class="material-symbols-outlined text-red-500">local_fire_department</span>
+                </div>
+                <div class="flex items-center mt-2 text-sm text-gray-600">
+                    <span class="material-symbols-outlined fill text-yellow-400 text-base">star</span>
+                    <span class="ml-1 font-semibold text-gray-800">4.5</span>
+                    <span class="ml-1 text-gray-400">(127)</span>
+                    <span class="mx-2 text-gray-300">|</span>
+                    <span class="font-medium">0.3km</span>
+                    <span class="mx-2 text-gray-300">|</span>
+                    <span class="font-medium">대기 없음</span>
+                </div>
+                <div class="mt-3 flex gap-2">
+                    <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full font-medium">#김치찌개</span>
+                    <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full font-medium">#불고기</span>
+                </div>
+                <p class="mt-3 text-sm text-blue-600 font-semibold">당신이 5번 방문했어요!</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-lg cursor-pointer transition-shadow duration-300">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-bold">중화요리 대가</h3>
+                        <p class="text-sm text-gray-500">중식</p>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-300">local_fire_department</span>
+                </div>
+                <div class="flex items-center mt-2 text-sm text-gray-600">
+                    <span class="material-symbols-outlined fill text-yellow-400 text-base">star</span>
+                    <span class="ml-1 font-semibold text-gray-800">4.1</span>
+                    <span class="ml-1 text-gray-400">(158)</span>
+                    <span class="mx-2 text-gray-300">|</span>
+                    <span class="font-medium">0.4km</span>
+                    <span class="mx-2 text-gray-300">|</span>
+                    <span class="font-medium text-orange-500">대기 3팀</span>
+                </div>
+                <div class="mt-3 flex gap-2">
+                    <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full font-medium">#짜장면</span>
+                    <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full font-medium">#탕수육</span>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-orange-400 to-red-500 text-white p-5 rounded-xl">
+                <p class="text-lg font-bold flex items-center gap-2"><span class="material-symbols-outlined">auto_awesome</span>AI 맞춤 맛집 추천</p>
+                <p class="text-sm mt-2 mb-4 opacity-90">취향과 방문 기록을 분석해 완벽한 맛집을 찾아드려요!</p>
+                <button class="bg-white text-orange-500 font-bold px-4 py-2.5 rounded-lg w-full flex items-center justify-center gap-2 hover:bg-orange-50 transition-colors">
+                    <span>나만의 추천 받기</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+    <main class="flex-grow relative">
+        <div class="absolute inset-0 bg-gray-300">
+            <img alt="Map background showing streets and locations" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZuaYVQQFwoue76DZBAAf0NiOvN77M1QGNIGKOqwzcuBqcF8jG2Vm34nVpU2WMHZtAJEImaxVxYsO5sVFlDrYO_9hASQnIChWh8viOZhkGB1OYTF-pvg0ms72tANEl0eR74tb5BJMTV3GKVqGuQzny1xncdUrixFaUeNq9GNnOtbnMjauWcasITYXmJ_eWXHKPPCw5JZljF_H6bpoA47EdW1t2iUUtPUGNbty6XWkl1MO458lwPB-nAJeA2oFag_yxz3Nr2MWj0Pk"/>
+        </div>
+        <div class="absolute top-6 right-6 flex flex-col space-y-3 z-10">
+            <div class="bg-white rounded-full shadow-lg">
+                <button class="w-12 h-12 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-t-full border-b border-gray-200"><span class="material-symbols-outlined">add</span></button>
+                <button class="w-12 h-12 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-b-full"><span class="material-symbols-outlined">remove</span></button>
+            </div>
+            <button class="bg-white w-12 h-12 flex items-center justify-center text-gray-700 rounded-full shadow-lg hover:bg-gray-100">
+                <span class="material-symbols-outlined">my_location</span>
+            </button>
+            <button class="bg-orange-500 w-12 h-12 flex items-center justify-center text-white rounded-full shadow-lg hover:bg-orange-600">
+                <span class="material-symbols-outlined">near_me</span>
+            </button>
+        </div>
+        <div class="absolute" style="top: 45%; left: 55%">
+            <div class="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center cursor-pointer">
+                <span class="material-symbols-outlined text-orange-500">restaurant</span>
+            </div>
+        </div>
+        <div class="absolute" style="top: 50%; left: 60%">
+            <div class="w-10 h-10 bg-orange-500 text-white rounded-full shadow-lg flex items-center justify-center cursor-pointer border-2 border-white">
+                <span class="material-symbols-outlined">restaurant</span>
+            </div>
+        </div>
+        <div class="absolute" style="top: 60%; left: 40%">
+            <div class="w-14 h-14 bg-orange-500/80 backdrop-blur-sm text-white rounded-full shadow-lg flex items-center justify-center cursor-pointer border-2 border-white font-bold text-lg">
+                12+
+            </div>
+        </div>
+        <div class="absolute" style="top: 70%; left: 50%">
+            <div class="w-5 h-5 bg-blue-500 rounded-full shadow-md flex items-center justify-center ring-4 ring-blue-500/30">
+            </div>
+        </div>
+        <div class="absolute inset-0 bg-black/30 flex items-center justify-center z-20 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 max-h-[95vh] flex flex-col">
+                <div class="relative">
+                    <img alt="Grilled ribs with vegetables" class="w-full h-52 object-cover rounded-t-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ8P8CAiIpyyixlwr8bmTczS6Ufb4fS71rfJun91Qf4KBzvTGxgh-t-qBckZ5F1Y6c_ghg81i3smPAy1vfvRDTPsYkQgEmVmEFBv924ejeDD9GqdgCJrGXM0__eQeLn5IszheonOE-UOWOS-INiJ6wQRbI4y8QnvTTmtyU-ZrYMHqnpKFTWamqlWQV-ZcLtKrP0gxpJ7g5B9FDyaalTweFcoq_pjWNkPwep-a8U6lohonQFUwnLeh23A70GUM4-on05-KbmBHRmVE"/>
+                    <button class="absolute top-4 left-4 bg-white/80 p-2 rounded-full text-red-500 hover:bg-white backdrop-blur-sm">
+                        <span class="material-symbols-outlined fill">favorite</span>
+                    </button>
+                    <button class="absolute top-4 right-4 bg-black/50 p-2 rounded-full text-white hover:bg-black/70">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                    <span class="absolute bottom-4 left-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full font-medium">고기・바베큐</span>
+                </div>
+                <div class="p-6 flex-grow overflow-y-auto">
+                    <h2 class="text-2xl font-bold text-gray-800">바베큐 킹</h2>
+                    <div class="flex items-center mt-2 text-gray-600">
+                        <span class="material-symbols-outlined fill text-yellow-400">star</span>
+                        <span class="ml-1 font-bold text-gray-800">4.6</span>
+                        <span class="ml-1 text-gray-400">(234개 리뷰)</span>
+                    </div>
+                    <div class="flex items-center mt-3 text-sm text-gray-500">
+                        <span class="material-symbols-outlined text-base">location_on</span>
+                        <span class="ml-1">서울시 중구 장충동 987-65</span>
+                        <a class="ml-auto text-orange-500 font-semibold" href="#">0.8km 길찾기</a>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-lg my-6">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-semibold text-blue-800">내 방문 기록</span>
+                            <span class="font-medium text-blue-700">방문 4회</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="font-semibold text-blue-800">내 평점:</span>
+                            <div class="flex text-yellow-400">
+                                <span class="material-symbols-outlined fill">star</span>
+                                <span class="material-symbols-outlined fill">star</span>
+                                <span class="material-symbols-outlined fill">star</span>
+                                <span class="material-symbols-outlined fill">star</span>
+                                <span class="material-symbols-outlined text-gray-300">star</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-3">추천 메뉴</h3>
+                        <div class="flex space-x-3 text-center text-gray-800">
+                            <div>
+                                <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                    <span class="text-4xl">🍖</span>
+                                </div>
+                                <span class="text-sm mt-1.5 block font-medium">한우 갈비</span>
+                            </div>
+                            <div>
+                                <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                    <span class="text-4xl">🥓</span>
+                                </div>
+                                <span class="text-sm mt-1.5 block font-medium">삼겹살</span>
+                            </div>
+                            <div>
+                                <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                    <span class="text-4xl">🥩</span>
+                                </div>
+                                <span class="text-sm mt-1.5 block font-medium">목살</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <h3 class="font-bold text-lg mb-3 flex items-center gap-2 text-orange-500"><span class="material-symbols-outlined">auto_awesome</span> AI 리뷰 요약</h3>
+                        <p class="text-gray-600 leading-relaxed text-sm bg-orange-50/50 p-4 rounded-lg border border-orange-100">
+                            고기 품질이 정말 좋은 곳입니다. 한우 갈비는 입에서 녹고, 삼겹살도 두툼하고 맛있어요. 직원들이 친절하게 구워주셔서 편리합니다. 사이드 메뉴도 훌륭해서 재방문 의사 100%입니다!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body></html>

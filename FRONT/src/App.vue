@@ -1,29 +1,22 @@
 <script setup lang="ts">
 import { defineStore } from 'pinia';
-import MapView from "@/components/map/MapView.vue"
-import Loading from "@/components/ui/Loading.vue"
+import MapView from "@/components/map/MapView.vue";
+import Loading from "@/components/ui/Loading.vue";
+import 'material-symbols';
+// import 'material-symbols/outlined.css';
 
+import ClusterSide from "@/components/side/ClusterSide.vue";
 
 
 </script>
 
 <template>
+  <ClusterSide />
   <MapView />
 
   <Loading />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+ #app { display: flex; }
 </style>
