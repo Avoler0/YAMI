@@ -1,15 +1,14 @@
 
 html,body {
   margin: 0;
-  font-size: 10px;
+  font-size: 16px;
   font-weight: 400;
-  line-height: 1.5;
 }
 
-#app { display: flex; font-size: inherit; height: 100vh; width: 100vw; }
+#app { display: flex; height: 100vh; width: 100vw; }
 
 
-* { box-sizing: border-box; font-family: "pretendard", serif; margin: 0; padding: 0; }
+* { box-sizing: border-box; font-family: "pretendard", serif; font-size: inherit; margin: 0; padding: 0; }
 
 button { border: 0; background: none; }
 

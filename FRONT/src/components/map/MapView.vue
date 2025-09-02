@@ -1,8 +1,7 @@
 <script setup lang="ts">
   import { useLoadingStore } from "@/stores/loading.store.ts"
-  import { loadKakaoMap } from "@/utils/loadKakaoMap.js";
   import { ref, onMounted, nextTick  } from 'vue';
-  import {useGeoPosition,DEFAULT_POSITION } from "@/composables/useGeoPosition.js";
+  import {DEFAULT_POSITION } from "@/composables/useGeoPosition.js";
   import {usePlaces} from "@/composables/usePlaces.js";
   import {useKakaoMap} from "@/composables/useKakaoMap.js";
   import {DEFAULT_ZOOM_LEVEL, PEOPLE_RADIUS} from "@/contants/map.js";
@@ -54,8 +53,8 @@
 </script>
 
 <template>
-  <div class="map-wrap">
-    <div  ref="mapContainer" id="mapView">
+  <div id="mapWrap" class="flex-1 h-full relative w-full">
+    <div class="h-full left-0 absolute top-0 w-full" ref="mapContainer">
 
     </div>
     <div class="consult-map"></div>
@@ -63,8 +62,5 @@
 </template>
 
 <style>
-  .map-wrap { flex: 1; height: 100%; position: relative; width: 100%; }
-
-  #mapView { height: 100%; left: 0; position: absolute; top: 0; width: 100%; }
 
 </style>
