@@ -31,7 +31,7 @@ function placeClick(e: MouseEvent) {
   }
 
   if(isPlaceClick.value) {
-    modal.open('place', place,'#mapWrap');
+    modal.open('place', { id:place.id },'#mapWrap');
   } else {
     modal.close();
   }

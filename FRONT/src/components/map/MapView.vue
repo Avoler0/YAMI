@@ -5,6 +5,7 @@
   import {usePlaces} from "@/composables/usePlaces.js";
   import {useKakaoMap} from "@/composables/useKakaoMap.js";
   import {DEFAULT_ZOOM_LEVEL, PEOPLE_RADIUS} from "@/contants/map.js";
+  import {usePlacesStore} from "@/stores/places.store.ts";
 
   defineOptions({
     name: "MapView",
@@ -13,7 +14,8 @@
   const loading = useLoadingStore();
   const mapContainer = ref<HTMLElement | null>(null);
   const { updateBounds,renderMarker ,position } = useKakaoMap();
-  const { fetchNearbyPlaces, places } = usePlaces();
+  const { places } = usePlacesStore();
+  const { fetchNearbyPlaces } = usePlaces();
 
   async function initMapView() {
     loading.start();
@@ -28,16 +30,13 @@
         defaultCenter: { lat: DEFAULT_POSITION.lat, lng: DEFAULT_POSITION.lng },
       })
 
-     console.log("표지션",position.value.lat, position.value.lng)
-
       await fetchNearbyPlaces(
         Number(position.value.lat),
         Number(position.value.lng),
           PEOPLE_RADIUS
       )
 
-      renderMarker(places.value.documents)
-      console.log(places.value.meta)
+      await renderMarker(places)
 
     } catch(err) {
       console.error("카카오맵 초기화 실패:", err);

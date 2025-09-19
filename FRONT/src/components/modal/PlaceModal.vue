@@ -2,13 +2,18 @@
 
 import type {Place} from "@/types/places.ts";
 import {useModal} from "@/composables/useModal.ts";
+import {usePlacesStore} from "@/stores/places.store.ts";
 
 type Props = {
   place: Place;
 }
 
 const { modalProps,close } = useModal();
-const { place_name,place_url,address_name,category_name } = modalProps.value;
+const { getPlace } = usePlacesStore();
+const placeId = modalProps.value.id;
+const placeData = getPlace(placeId);
+
+const { place_name,place_url,address_name,category_name } = placeData;
 
 const cateSplit = category_name.split(">")
 const category = cateSplit[cateSplit.length - 1].replace(',','・');

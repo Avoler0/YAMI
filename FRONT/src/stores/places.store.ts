@@ -1,18 +1,26 @@
-
-
 import {defineStore} from "pinia";
-import { ref } from "vue";
 import type {Place} from "../types/places.ts";
+import {reactive, ref} from "vue";
 
 
 export const usePlacesStore = defineStore('places',() => {
-    const placeIndex = reactive(new Map<string, Place>());
+    const places = reactive(new Map<string, Place>());
+    const placeCount = ref(0);
 
-    function addPlaces(places: Place[]){
-        for (const place ofr places){
-            placeIndex.set(place.id, place);
+    function addPlaces(data: { count: number; documents: Place[] }) {
+        const placesData:Place[] = data.documents;
+        placeCount.value = data.count;
+
+        for (const place of placesData){
+            places.set(place.id, place);
         }
+
+        console.log('플레이스 저장',places,data)
     }
 
-    return { placeIndex, addPlaces }
+    function getPlace(id:number){
+        return places.get(id);
+    }
+
+    return { places, addPlaces, getPlace }
 })

@@ -22,6 +22,7 @@ const markers:any[] = [];
 
 export function useKakaoMap(){
     const mapStore = useMapStore();
+    const { setGpsPosition } = useMapStore();
 
     async function init(containerEl: HTMLElement, opts?: { level?: number; defaultCenter?: {lat:number; lng:number} })  {
         const kakao = await loadKakaoMap();
@@ -104,6 +105,8 @@ export function useKakaoMap(){
             const ll = transKakaoLatLng(lat, lng);
             (opts.smooth ?? true) ? map.value.panTo(ll) : map.value.setCenter(ll);
         }
+        
+        console.log('포지션 밸',transKakaoLatLng())
 
         setMarker('yami',transKakaoLatLng());
     }
@@ -114,16 +117,16 @@ export function useKakaoMap(){
     }
 
     async function renderMarker(places: Place[]) {
-        console.log('렌더 마커',map.value, maps.value)
+        console.log('렌더 마커',places)
         if(!map.value || !maps.value) return;
 
         clearMarkers();
 
-        places.forEach((place) => {
-            const pos = transKakaoLatLng(place.y, place.x);
+        for(const [key,value] of places){
+            const pos = transKakaoLatLng(value.y, value.x);
 
-            setMarker('place',pos,place)
-        })
+            setMarker('place',pos,value)
+        }
     }
 
     function transKakaoLatLng(lat?: number, lng?: number) {

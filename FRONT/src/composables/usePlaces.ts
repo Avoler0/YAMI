@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import {fetchNearby} from "../api/places.ts";
 import {useKakaoMap} from "./useKakaoMap.ts";
+import {usePlacesStore} from "../stores/places.store.ts";
 
 
 export function usePlaces(){
@@ -14,15 +15,11 @@ export function usePlaces(){
         loading.value = true;
 
         try{
+            const { addPlaces } = usePlacesStore();
             const { data } = await fetchNearby(lat, lng, radius, limit);
 
-            console.log('데이터',data)
+            addPlaces(data);
 
-            data.documents.forEach((item) => {
-                if(item.place_name === "문화반점"){
-                    console.log('지정 데이터',item)
-                }
-            })
             places.value = data;
         }catch(e:any){
             error.value = e.message;

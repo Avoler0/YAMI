@@ -7,15 +7,11 @@ const modalTargetId = ref('body');
 
 
 export function useModal() {
-
-
     const open = (key: string, props: Record<string, unknown> = {}, target:string = 'body') => {
         modalKey.value = key;
         modalProps.value = props;
         modalTargetId.value = target;
         isOpen.value = true;
-        
-        console.log('오픈')
     }
 
     const close = () => {

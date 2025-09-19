@@ -1,28 +1,15 @@
 import {defineStore} from "pinia";
 import {computed, reactive, ref} from "vue";
-import {DEFAULT_ZOOM_LEVEL} from "../contants/map.ts";
+import {DEFAULT_POSITION } from "@/composables/useGeoPosition.js";
 
 export type BBox = { sw:{lat:number; lng:number}, ne:{lat:number; lng:number} }
 
 export const useMapStore = defineStore('map',() => {
-    const zoom = ref(DEFAULT_ZOOM_LEVEL);
-    const center = ref(null);
-    const currentCells = ref([]);
+    const position = ref({lat: DEFAULT_POSITION.lat, lng: DEFAULT_POSITION.lng});
 
-    const cellCache = reactive(
-        new Map<string, { placeIds: Set<string>; fetchedAt: number; }>
-    )
-
-
-    function setZoom(lv: number){ zoom.value = lv };
-
-    function setCenter(lat:number, lng:number){ center.value = { lat,lng }; }
-
-    function setCells(cells: any) { currentCells.value = cells; }
-
-    function cacheCell(cellId:string, placeIds: Set<string>){
-        cellCache.set(cellId, { placeIds, fetchedAt: Date.now() });
+    function setGpsPosition(pos){
+        position.value = pos;
     }
 
-    return { zoom, center, currentCells, cellCache, setZoom, setCenter, setCells, cacheCell };
+    return { position, setGpsPosition };
 })

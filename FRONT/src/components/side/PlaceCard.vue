@@ -1,6 +1,14 @@
 <script setup lang="ts">
+
+import type {Place} from "@/types/places.ts";
+import {useModal} from "@/composables/useModal.ts";
+
+type Props = {
+  place: Place;
+}
+
 // 동적인 데이터를 받을 수 있도록 props를 정의합니다.
-defineProps({
+/*defineProps({
   isBookmarked: {
     type: Boolean,
     default: false
@@ -9,11 +17,20 @@ defineProps({
     type: Number,
     default: 0
   }
-})
+})*/
+
+const modal = useModal();
+const { place } = defineProps<Props>();
+
+const isBookmarked = true;
+const waitingCount = 2;
 
 
+console.log(place)
 
-
+function cardClick() {
+  modal.open('place', { id:place.id },'#mapWrap');
+}
 
 </script>
 
@@ -21,10 +38,11 @@ defineProps({
   <div
       class="p-6 border border-gray-200 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
       :class="{ 'bmk': isBookmarked }"
+      @click="cardClick"
   >
     <div class="flex justify-between">
       <div>
-        <h3 class="text-lg font-bold">맛있는 한식당</h3>
+        <h3 class="text-lg font-bold">{{place.place_name}}</h3>
         <p class="mt-1 text-gray-500 text-sm font-medium">한식</p>
       </div>
       <span
