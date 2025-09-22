@@ -42,7 +42,7 @@ const { places } = usePlacesStore();
     </div>
 
     <div class="flex flex-grow flex-col gap-4 min-h-0 mt-6 overflow-y-auto pr-2 pb-4">
-      <PlaceCard :place="place" v-for="[id, place] in places" :key="id" />
+      <PlaceCard :placeId="place.id" v-for="[id, place] in places" :key="id" />
     </div>
 
     <div class="bg-gradient-to-br from-orange-400 to-red-500 text-white p-5 rounded-xl mt-6">

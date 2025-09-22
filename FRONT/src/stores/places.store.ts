@@ -15,7 +15,6 @@ export const usePlacesStore = defineStore('places',() => {
             places.set(place.id, place);
         }
 
-        console.log('플레이스 저장',places,data)
     }
 
     function getPlace(id:number){

@@ -2,9 +2,10 @@
 
 import type {Place} from "@/types/places.ts";
 import {useModal} from "@/composables/useModal.ts";
+import {usePlacesStore} from "@/stores/places.store.ts";
 
 type Props = {
-  place: Place;
+  placeId: Number;
 }
 
 // 동적인 데이터를 받을 수 있도록 props를 정의합니다.
@@ -20,13 +21,16 @@ type Props = {
 })*/
 
 const modal = useModal();
-const { place } = defineProps<Props>();
+const { getPlace } = usePlacesStore();
+const { placeId } = defineProps<Props>();
+
+const place = getPlace(placeId);
 
 const isBookmarked = true;
 const waitingCount = 2;
 
 
-console.log(place)
+// console.log(place)
 
 function cardClick() {
   modal.open('place', { id:place.id },'#mapWrap');

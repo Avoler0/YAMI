@@ -6,85 +6,97 @@ import { DEFAULT_POSITION } from "@/contants/map.ts";
 import type {Place} from "../types/places.ts";
 
 import MapMarker from "../components/map/MapMarker.vue";
-import {DEFAULT_ZOOM_LEVEL, MAX_ZOOM_LEVEL} from "../contants/map.ts";
-import {getMetersPerPixel} from "../utils/gridUtils.ts";
 
-let imgMe: any, imgPlace: any, imgPlaceSelected: any;
-const position = ref<Coords | null> (null);
+
 const bounds = ref<kakao.maps.LatLngBounds | null>(null);
 const map = ref<any>(null);
 const maps = ref<any>(null);
-let centerMarker: any = null;
-const markers:any[] = [];
+const markers = ref<any>([]);
 
 
 
 
 export function useKakaoMap(){
     const mapStore = useMapStore();
-    const { setGpsPosition } = useMapStore();
 
-    async function init(containerEl: HTMLElement, opts?: { level?: number; defaultCenter?: {lat:number; lng:number} })  {
-        const kakao = await loadKakaoMap();
-        const level = opts?.level ?? opts?.level >= MAX_ZOOM_LEVEL ? DEFAULT_ZOOM_LEVEL : opts?.level;
-        const defaultCenter = opts?.defaultCenter ?? { lat: DEFAULT_POSITION.lat, lng: DEFAULT_POSITION.lng };
 
-        maps.value = kakao.maps;
 
-        map.value = new maps.value.Map(
-            containerEl,
-            { center: new maps.value.LatLng(defaultCenter.lat, defaultCenter.lng), level, maxLevel: MAX_ZOOM_LEVEL }
-        )
+    async function createMap(container:HTMLElement, center: { lat: number, lng: number }, level:number) {
+        try {
+            const kakao = await loadKakaoMap();
+            maps.value = kakao.maps;
+            map.value = new kakao.maps.Map(container, {
+                center: new kakao.maps.LatLng(center.lat, center.lng),
+                level: level,
+            });
 
-        const coords = await getPosition();
-        await setPosition(coords.lat, coords.lng, { move: true, smooth: true });
+            return map.value;
+        } catch (err) {
+            console.error('지도 생성 실패:', err);
+            return null;
+        }
+    }
 
-        if(coords.lat == DEFAULT_POSITION.lat && coords.lng == DEFAULT_POSITION.lng){
-            console.log("GPS 값을 찾지 못했습니다.")
+    function moveMap(mapInstance:any,coords: { lat: number, lng: number }){
+        const position = new window.kakao.maps.LatLng(coords.lat, coords.lng);
+
+        mapInstance.panTo(position);
+    }
+
+    async function createUserMarker(coords: { lat: number, lng: number }){
+
+        return new maps.value.CustomOverlay({
+            position: new maps.value.LatLng(coords.lat, coords.lng),
+            map: map.value,
+            clickable: true,
+            content: makeMarkerEl('yami',null),
+            yAnchor:1,
+            zIndex: 5
+        });
+    }
+
+
+    function createPlacesMarker(places:Map<string,Place>){
+        if (!maps) {
+            console.error('마커 생성 실패: 지도 인스턴스가 없습니다.');
+            return [];
         }
 
+        const kakaoMaps = window.kakao.maps; // window.kakao에서 직접 가져옵니다.
 
+        for(const [key,value] of places){
+            const overlay = new maps.value.CustomOverlay({
+                position: new maps.value.LatLng(value.y, value.x),
+                map: map.value,
+                clickable: true,
+                content: makeMarkerEl('place',key),
+                yAnchor:1,
+                zIndex: 5
+            });
 
-        maps.value.event.addListener(map.value, 'zoom_changed', () => { getMetersPerPixel(map.value); })
+            markers.value.push(overlay)
 
-
-        getMetersPerPixel(map.value);
+            overlay.setMap(map.value);
+        }
+        console.log(`${markers.length}개의 마커 생성 완료`);
+        return markers; // 생성된 마커 배열을 반환합니다.
     }
 
 
-
-
-    function updateBounds(){
-        bounds.value = map.value.getBounds();
-
-        console.log('바운즈',bounds)
-    }
-
-    function makeMarkerEl(type: string, data: Place) {
+    function makeMarkerEl(type: string, placeId: String) {
         const markerEl = document.createElement("div");
         markerEl.setAttribute("data-title", name);
 
         const comp = createApp(MapMarker,{
             type: type,
-            place: data
+            placeId: placeId
         });
         comp.mount(markerEl);
 
         return markerEl.firstChild as HTMLElement;
     }
 
-    function setMarker(className:string,position:any,data?: Place) {
-        return new maps.value.CustomOverlay({
-            position: position,
-            map: map.value,
-            clickable: true,
-            content: makeMarkerEl(className,data),
-            yAnchor:1,
-            zIndex: 5
-        });
-    }
-
-    async function getPosition() {
+    async function getUserPosition() {
         return await new Promise<Coords>((resolve) => {
             if (!('geolocation' in navigator)) {
                 return resolve(fallback);
@@ -97,44 +109,17 @@ export function useKakaoMap(){
         });
     }
 
-    async function setPosition(
-        lat: number, lng: number, opts: { move?: boolean, smooth?:boolean } = {}
-    ): Promise<void>{
-        position.value = { lat, lng };
-        if (opts?.move) {
-            const ll = transKakaoLatLng(lat, lng);
-            (opts.smooth ?? true) ? map.value.panTo(ll) : map.value.setCenter(ll);
-        }
-        
-        console.log('포지션 밸',transKakaoLatLng())
-
-        setMarker('yami',transKakaoLatLng());
-    }
-
     function clearMarkers() {
-        markers.forEach(m => m.setMap(null));
-        markers.length = 0;
-    }
-
-    async function renderMarker(places: Place[]) {
-        console.log('렌더 마커',places)
-        if(!map.value || !maps.value) return;
-
-        clearMarkers();
-
-        for(const [key,value] of places){
-            const pos = transKakaoLatLng(value.y, value.x);
-
-            setMarker('place',pos,value)
-        }
+        markers.value.forEach(m => m.setMap(null));
+        markers.value.length = 0;
     }
 
     function transKakaoLatLng(lat?: number, lng?: number) {
-        const c = lat != null && lng != null ? { lat, lng } : (position.value ?? DEFAULT_POSITION);
+        const c = lat != null && lng != null ? { lat, lng } : (currentPosition ?? DEFAULT_POSITION);
         return new maps.value.LatLng(c.lat, c.lng);
     }
 
 
 
-    return { map, maps, init,position,renderMarker,updateBounds, bounds }
+    return { map, maps, createMap,moveMap,createPlacesMarker,createUserMarker, bounds }
 }

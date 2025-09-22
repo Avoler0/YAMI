@@ -2,16 +2,19 @@
 import { ref, computed } from "vue";
 import type {Place} from "@/types/places.ts";
 import {useModal} from "@/composables/useModal.ts";
+import {usePlacesStore} from "@/stores/places.store.ts";
 
 type Prop = {
   type: "yami" | "place",
-  place: Place
+  placeId: Number
 }
 defineOptions({
   name: "MapMarker",
 })
-const prop = defineProps<Prop>()
-const { place, type } = prop;
+const { type, placeId } = defineProps<Prop>()
+const { getPlace } = usePlacesStore();
+
+const place = placeId ? getPlace(placeId) : null;
 
 const isPlaceClick = ref(false);
 const markerPin = ref<HTMLElement | null>(null);
@@ -57,7 +60,7 @@ const markerClasses = computed(() => {
   <div v-if="type" ref="markerPin" class="relative">
     <span
         :class="markerClasses"
-        v-bind="type == 'place' ? { 'yami-rest': place.place_name ?? '' } : {}"
+        v-bind="type == 'place' ? { 'yami-rest': place ? place.place_name : '' } : {}"
         @click="placeClick"></span>
   </div>
 </template>
