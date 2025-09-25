@@ -18,10 +18,9 @@ export const createApp = () => {
         const fullUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
         console.log(`[${req.method}] ${fullUrl}`);
 
-        // 요청 바디도 찍고 싶으면 (POST/PUT 등)
-        if (Object.keys(req.body || {}).length > 0) {
+        /*if (Object.keys(req.body || {}).length > 0) {
             console.log("Body:", req.body);
-        }
+        }*/
 
         next(); // 다음 미들웨어로 넘기기
     });

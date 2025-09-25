@@ -1,25 +1,16 @@
 import {createApp, ref} from "vue";
 import { useMapStore } from "@/stores/map.store.ts"
 import {loadKakaoMap} from "@/utils/loadKakaoMap.ts";
-import type {Coords} from "@/types/places.ts";
-import { DEFAULT_POSITION } from "@/contants/map.ts";
 import type {Place} from "../types/places.ts";
 
 import MapMarker from "../components/map/MapMarker.vue";
 
-
-const bounds = ref<kakao.maps.LatLngBounds | null>(null);
 const map = ref<any>(null);
 const maps = ref<any>(null);
 const markers = ref<any>([]);
 
 
-
-
 export function useKakaoMap(){
-    const mapStore = useMapStore();
-
-
 
     async function createMap(container:HTMLElement, center: { lat: number, lng: number }, level:number) {
         try {
@@ -43,7 +34,7 @@ export function useKakaoMap(){
         mapInstance.panTo(position);
     }
 
-    async function createUserMarker(coords: { lat: number, lng: number }){
+    function createUserMarker(coords: { lat: number, lng: number }){
 
         return new maps.value.CustomOverlay({
             position: new maps.value.LatLng(coords.lat, coords.lng),
@@ -62,7 +53,7 @@ export function useKakaoMap(){
             return [];
         }
 
-        const kakaoMaps = window.kakao.maps; // window.kakao에서 직접 가져옵니다.
+        clearMarkers();
 
         for(const [key,value] of places){
             const overlay = new maps.value.CustomOverlay({
@@ -78,8 +69,13 @@ export function useKakaoMap(){
 
             overlay.setMap(map.value);
         }
-        console.log(`${markers.length}개의 마커 생성 완료`);
+        console.log(`${markers.value.length}개의 마커 생성 완료`);
         return markers; // 생성된 마커 배열을 반환합니다.
+    }
+
+    function clearMarkers() {
+        markers.value.forEach(m => m.setMap(null));
+        markers.value.length = 0;
     }
 
 
@@ -96,30 +92,5 @@ export function useKakaoMap(){
         return markerEl.firstChild as HTMLElement;
     }
 
-    async function getUserPosition() {
-        return await new Promise<Coords>((resolve) => {
-            if (!('geolocation' in navigator)) {
-                return resolve(fallback);
-            }
-            navigator.geolocation.getCurrentPosition(
-                (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-                () => resolve(DEFAULT_POSITION),
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-        });
-    }
-
-    function clearMarkers() {
-        markers.value.forEach(m => m.setMap(null));
-        markers.value.length = 0;
-    }
-
-    function transKakaoLatLng(lat?: number, lng?: number) {
-        const c = lat != null && lng != null ? { lat, lng } : (currentPosition ?? DEFAULT_POSITION);
-        return new maps.value.LatLng(c.lat, c.lng);
-    }
-
-
-
-    return { map, maps, createMap,moveMap,createPlacesMarker,createUserMarker, bounds }
+    return { createMap,moveMap,createPlacesMarker,createUserMarker }
 }

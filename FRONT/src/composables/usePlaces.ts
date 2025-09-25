@@ -2,6 +2,8 @@ import { ref } from "vue";
 import {fetchNearby} from "../api/places.ts";
 import {useKakaoMap} from "./useKakaoMap.ts";
 import {usePlacesStore} from "../stores/places.store.ts";
+import {makeGridCells} from "../utils/gridUtils.ts";
+import {debounce} from "../utils/libUtils.ts";
 
 
 export function usePlaces(){
@@ -11,22 +13,34 @@ export function usePlaces(){
     const placeDetail = ref(null);
     const reviews = ref([]);
 
-    async function fetchNearbyPlaces(lat:number, lng:number, radius = 500, limit){
+
+    async function loadPlaces(map){
+        const gridCells = makeGridCells(map,100);
+
+        console.log('디바운스')
+
+        await fetchNearbyPlaces(gridCells)
+    }
+
+
+    async function fetchNearbyPlaces(cells){
         loading.value = true;
 
         try{
             const { addPlaces } = usePlacesStore();
-            const { data } = await fetchNearby(lat, lng, radius, limit);
+            const { data } = await fetchNearby(cells);
 
-            addPlaces(data);
+            console.log('플레이쓰',data)
+            // addPlaces(data);
 
             places.value = data;
         }catch(e:any){
             error.value = e.message;
+            console.log('에러?',error)
         }finally {
             loading.value = false;
         }
     }
 
-    return { loading, error, places, placeDetail, reviews, fetchNearbyPlaces };
+    return { loading, error, places, placeDetail, reviews, loadPlaces };
 }

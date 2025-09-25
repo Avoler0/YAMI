@@ -1,3 +1,5 @@
+import {debounce} from "./libUtils.ts";
+
 export type GridCell = {
     idxX: number;
     idxY: number;
@@ -23,7 +25,18 @@ export function getMetersPerPixel(map:kakao.maps.map){
     return { mppX, mppY };
 }
 
-function makeGridCells(map: kakao.maps.map, cellSizeMeters = 200):GridCell[] {
+function getCenterAndRadius(cell): { center: {lat: number, lng: number }; radius: number } {
+    const center = {
+        lat: (cell.sw.lat + cell.ne.lat) / 2,
+        lng: (cell.sw.lng + cell.ne.lng) / 2,
+    };
+
+    const radius = haversine(center, cell.ne);
+
+    return { center, radius }
+}
+
+export function makeGridCells(map: kakao.maps.map, cellSizeMeters = 200):GridCell[] {
     const proj = map.getProjection();
     const { mppX, mppY } = getMetersPerPixel(map);
 
@@ -42,8 +55,8 @@ function makeGridCells(map: kakao.maps.map, cellSizeMeters = 200):GridCell[] {
     const cellPxX = cellSizeMeters / mppX;
     const cellPxY = cellSizeMeters / mppY;
 
-    const cols = Math.max(1, Math.floor((maxX - minX) / cellPxX));
-    const rows = Math.max(1, Math.floor((maxY - minY) / cellPxY));
+    const cols = Math.max(1, Math.ceil((maxX - minX) / cellPxX));
+    const rows = Math.max(1, Math.ceil((maxY - minY) / cellPxY));
 
     const cells: GridCell[] = [];
 
@@ -62,13 +75,9 @@ function makeGridCells(map: kakao.maps.map, cellSizeMeters = 200):GridCell[] {
             const cellSW: LatLng = { lat: rb.getLat(), lng: lt.getLng() };
             const cellNE: LatLng = { lat: lt.getLat(), lng: rb.getLng() };
 
-            cells.push({
-                idxX: ix,
-                idxY: iy,
-                sw: cellSW,
-                ne: cellNE,
-                px: { x0, y0, x1, y1 },
-            });
+            const cell = getCenterAndRadius({sw:cellSW, ne:cellNE} );
+
+            cells.push(cell);
         }
     }
 

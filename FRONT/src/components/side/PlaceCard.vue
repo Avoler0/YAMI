@@ -29,9 +29,6 @@ const place = getPlace(placeId);
 const isBookmarked = true;
 const waitingCount = 2;
 
-
-// console.log(place)
-
 function cardClick() {
   modal.open('place', { id:place.id },'#mapWrap');
 }

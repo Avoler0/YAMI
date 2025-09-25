@@ -8,6 +8,7 @@
   import {usePlacesStore} from "@/stores/places.store.ts";
   import {useMapStore} from "@/stores/map.store.ts";
   import {storeToRefs} from "pinia";
+  import {makeGridCells} from "@/utils/gridUtils.ts";
 
   defineOptions({
     name: "MapView",
@@ -19,7 +20,7 @@
   const { createMap,moveMap,createPlacesMarker,createUserMarker  } = useKakaoMap();
   const placesStore = usePlacesStore();
   const { places } = storeToRefs(placesStore);
-  const { fetchNearbyPlaces } = usePlaces();
+  const { loadPlaces } = usePlaces();
   const { getUserPosition } = useGeoPosition();
 
   onMounted(async () => {
@@ -45,14 +46,14 @@
             window.kakao.maps.event.removeListener(map, 'idle', onMapIdle);
 
             const center = map.getCenter();
-            await fetchNearbyPlaces(
-                center.getLat(),
-                center.getLng(),
-                PEOPLE_RADIUS
-            );
+            await loadPlaces(map);
 
             createUserMarker(userCoords);
-            await createPlacesMarker(places.value)
+            createPlacesMarker(places.value)
+
+            const cells = await makeGridCells(map,200)
+
+            console.log(cells)
             loading.stop();
           };
 

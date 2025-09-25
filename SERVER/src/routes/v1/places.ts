@@ -1,6 +1,7 @@
 import { Router } from "express";
 import axios from "axios";
 import pLimit from "p-limit";
+import {getCenterAndRadius} from "../../utils/placeCellUtil";
 
 export const router = Router();
 
@@ -59,68 +60,81 @@ async function fetchNearbyKakaoPlacesPage(
     };
 }
 
-async function fetchNearbyKakaoPlacesAll(params: {
-    lat: number;
-    lng: number;
-    radius: number;
-}){
-    const first = await fetchNearbyKakaoPlacesPage({ ...params, page:1 })
-    const pageableCount = first.meta.pageable_count ?? first.meta.total_count ?? 0;
-    const pageLimit = computePageLimit(pageableCount);
+async function fetchNearbyKakaoPlacesAll(cell){
+    const { center, radius } = getCenterAndRadius(cell);
+    let allDocuments:any = [];
+    let page = 1;
+    let isEnd = false;
 
-    console.log('페이지 올',pageableCount, first.meta.total_count)
+    while(!isEnd){
+        try {
+            const response = await axios.get(
+                "https://dapi.kakao.com/v2/local/search/category.json",
+                {
+                    headers: { Authorization: `KakaoAK ${process.env.KAKAO_REST_KEY}` },
+                    params: {
+                        category_group_code: "FD6",
+                        x: center.lng,
+                        y: center.lat,
+                        radius: Math.min(Math.ceil(radius), 20000), // 반경 올림 처리, 최대 20km
+                        sort: "distance",
+                        size: 15, // 한 페이지에 가져올 개수
+                        page: page,
+                    },
+                    timeout: 15000
+                }
+            );
 
-    const uniq = new Map<string, any>();
-    pushDocs(uniq,first.documents);
+            const { documents, meta } = response.data;
+            if (documents.length > 0) {
+                allDocuments.push(...documents);
+            }
 
-   if(pageLimit === 1 || first.meta.is_end){
-       return { count:uniq.size, documents: [...uniq.values()] };
-   }
+            isEnd = meta.is_end;
+            page++;
 
-   const limit = pLimit(CONCURRENCY);
-   const tasks: Promise<void>[] = [];
+            // 카카오 API는 최대 45개까지만 제공하므로 3페이지(15*3) 이상은 의미 없음
+            if (page > 3) break;
 
-   for (let p = 2; p <= pageLimit; p++) {
-       tasks.push(
-           limit(async () => {
-               const pg = await fetchNearbyKakaoPlacesPage({...params, page:p});
+        } catch (error) {
+            console.error("카카오 API 호출 중 에러 발생:", error);
+            break; // 에러 발생 시 해당 cell 탐색 중단
+        }
+    }
 
-               pushDocs(uniq,pg.documents);
-           })
-       )
-   }
-
-    console.log('페이지 리밋',tasks)
-
-
-   await Promise.all(tasks);
-
-    return { count: uniq.size, documents: [...uniq.values()] };
+    return allDocuments;
 }
 
-router.get('/nearby', async (req, res) => {
-    console.log("GET /nearby");
-    try{
-        const lat = Number(req.query.lat);
-        const lng = Number(req.query.lng);
-        const radius = Math.min(Number(req.query.radius || 500), 20000);
-        const limit = Math.max(1, Math.min(Number(req.query.limit || 50), 500));
+router.post('/nearby', async (req, res) => {
+    const { cells } = req.body as { cells: Cell[] };
 
-        console.log(req.query)
+    console.log('nearby 요청 도착',req)
 
-        if(Number.isNaN(lat) || Number.isNaN(lng)) {
-            return res.status(400).json({ error: { message: "lat , lng 필요" } })
-        }
 
-        const data = await fetchNearbyKakaoPlacesAll({lat,lng,radius});
 
-        const trimmed = { ...data, documents: data.documents.slice(0, limit) };
-
-        // console.log('데이터!',data)
-        res.status(200).json({ data: data })
-
-    } catch(err) {
-        console.error(err?.response?.data || err.message);
-        res.status(500).json({ error: { message: "카카오 로컬 API 호출 실패" } });
+    if (!cells || cells.length === 0) {
+        return res.status(400).json({ message: "셀 정보가 없습니다." });
     }
+
+    // 모든 셀에 대한 API 요청을 병렬로 처리하여 속도 향상
+    const promises = cells.map(cell => fetchNearbyKakaoPlacesAll(cell));
+    const resultsByCell = await Promise.all(promises);
+
+    // 중복 제거를 위해 Map 사용 (id를 key로 사용)
+    const placeMap = new Map<string, KakaoPlace>();
+
+    // 2차원 배열(resultsByCell)을 1차원으로 만들고 Map에 저장하여 중복 제거
+    resultsByCell.flat().forEach(place => {
+        if (!placeMap.has(place.id)) {
+            placeMap.set(place.id, place);
+        }
+    });
+
+    // Map의 value들만 배열로 변환하여 최종 결과로 사용
+    const uniquePlaces = Array.from(placeMap.values());
+
+    console.log('데이터 정렬',uniquePlaces)
+
+    res.json({ results: uniquePlaces });
+    
 })
